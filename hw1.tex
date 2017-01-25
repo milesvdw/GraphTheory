@@ -3,14 +3,15 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
-
+\usepackage{epstopdf}
+\usepackage[margin=0.5in]{geometry}
 % Title Page
 \title{Homework Set 1}
 \author{Miles Van de Wetering
 	\and
 	Cierra Shawe
 	\and
-	Charles Dwayne}
+	Charles Hill}
 
 
 \begin{document}
@@ -21,7 +22,7 @@ Draw all possible DFS trees rooted at x for the following graph. Mark, tree, for
 backward, and cross edges
 \begin{center}
 	\includegraphics[]{hw1_p1_graph.png}
-	\includegraphics[]{cs420-hw2.eps}
+	\includegraphics[scale=0.5]{cs420-hw2}
 \end{center}
 
 \section*{Problem 3}
@@ -34,7 +35,7 @@ Let G = (V, E) be an undirected unweighted graph, and let s, t $\in$ V. Show tha
 In order to show this we will build an argument based on three truths:
 \begin{enumerate}
 	\item Any single path, in any graph, may be destroyed by removing a single vertex along that path.
-	\item If (1) is false, then every path  between s and t must pass through at least $\sqrt{V} + 3$ vertices.
+	\item If condition (1) is false, then every path  between s and t must pass through at least $\sqrt{V} + 3$ vertices.
 	\item The most vertices that we may need to remove in order to disconnect every path from s to t is the number of paths between s and t, assuming that these paths share no vertices except s and t. If they share more vertices, then we can remove fewer nodes and still succeed. (Menger Theorem)
 \end{enumerate}
 	\smallskip
