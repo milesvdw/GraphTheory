@@ -17,40 +17,60 @@
 
 \section*{Problem 1 - a}
 How could we delete an arbitrary vertex v from this graph, without changing the shortest-path distance
-between any other pair of vertices? Describe an algorithm that constructs a directed graph G' = (V', E') with weighted edges, where V = V $\textbackslash$\{v\}, and the shortest-path distance between any two nodes in G' is equal to the shortest-path distance between the same two nodes in G, in O($V^2$) time.\\
+between any other pair of vertices? Describe an algorithm that constructs a directed graph G' = (V', E') with weighted edges, where V' = V $\textbackslash$\{v\}, and the shortest-path distance between any two nodes in G' is equal to the shortest-path distance between the same two nodes in G, in O($V^2$) time.\\
 
-To solve this, we can replace paths that are broken by the removal of \textit{v}. If \textit{v} has no outgoing edges, it is at the end of every path it's a part of (i.e., \textit{v} is a \textit{sink}). Therefore, it can be deleted without affecting any other pair of vertices. \textit{v} has no incoming edges, it is the beginning of every path it's a part of (i.e., \textit{v} is a \textit{source}). Therefore, it can be deleted without affecting any other pair of vertices. If, however, \textit{v} has \textit{at least} one incoming \textit{and} outgoing edge, then we must replace the paths that are impacted by the deletion of \textit{v}. The algorithm for this replacement is as follows: \\
+To solve this, we simply choose any vertex to remove. We prevent any shortest paths that make use of this vertex from changing by replacing paths that are broken by the removal of \textit{v} with new edges. If \textit{v} has no outgoing edges, it is at the end of every path it's a part of (i.e., \textit{v} is a \textit{sink}). Therefore, it can be deleted without affecting any other pair of vertices. \textit{v} has no incoming edges, it is the beginning of every path it's a part of (i.e., \textit{v} is a \textit{source}). Therefore, it can be deleted without affecting any other pair of vertices. If, however, \textit{v} has \textit{at least} one incoming \textit{and} outgoing edge, then we must replace the paths that are impacted by the deletion of \textit{v}. The algorithm for this is as follows: \\
 
-For each edge pred(\textit{v})$\rightarrow$\textit{v}$\rightarrow$succ(\textit{v}), if the successor to \textit{v} is adjacent to the predecessor ov \textit{v}, then record the weight of that edge. If the total weight of edge pred(\textit{v})$\rightarrow$\textit{v}$\rightarrow$succ(\textit{v}) is less than the weight of pred(\textit{v})$\rightarrow$succ(\textit{v}), change the weight of  pred(\textit{v})$\rightarrow$succ(\textit{v}) to weight(pred(\textit{v})$\rightarrow$\textit{v}$\rightarrow$succ(\textit{v})). Then, delete \textit{v}. If, however, succ(\textit{v}) $\notin$ adj(pred(\textit{v)}), add an edge pred(\textit{v})$\rightarrow$succ(\textit{v}) with weight(pred(\textit{v})$\rightarrow$\textit{v}$\rightarrow$succ(\textit{v})). Then, delete \textit{v}. \\
+First, for each vertex v, examine the set of outgoing edges from v. While there exists some edge pairing $e_1 = (v, u), e_2 = (v, u)$ mark the edge with the larger weight as 'hidden.' We will use this later. Alternatively, if the graph is sparse then we may skip this step. Once this is complete, we may assert (and rely upon the fact) that \emph{at most one unhidden edge} connects any vertex v to any other vertex u. Up to one edge may \emph{additonally} connect u back to v. (this may be done in O(E), and needn't be done if the graph is sparse)\\
 
-In this way, we preserve the shortest path from each pred(\textit{v}) to each succ(\textit{v}).\\ 
+Next, for each pair of edges $e_1 = (u_1, v), e_2 = (v, u_2), v, u_1, u_2 \in{V}, e_1, e_2 \in{E}$ (note that no such pairing of edges exists if v is a \emph{sink} or \emph{source}) examine the unhidden edge connecting $u_1$ and $u_2$ (if one exists) $e_3 = (u_1, u_2)$. If $w(e_1) + w(e_2) < w(e_3)$ then mark $e_3$ as hidden and add a new, unhidden edge $e_4 = (u_1, u_2)$ with weight $w(e_4) = w(e_1) + w(e_2)$. If there is no edge $e_3 = (u_1, u_2)$  then add a new edge in the same manner. Then, delete v. \\
 
-This algorithm runs max 2V times (for each edge incoming and outgoing from \textit{v}), and for each of those 2V runs may have to replace up to 2V edges. Thus, the runtime is O(4$V^2$), or O($V^2$)  \\
+In this way, we preserve all shortest paths that made use of v.\\ 
 
-\noindent \textbf{Pseudocode:}
+The first portion of this algorithm runs in O(E), while the second portion runs in O($V^2$) because there may be up to |V| incoming edges to $v$, and there may be up to $v$ outgoing edges, and we need to account for every combination of in->out paths, which is V*(V-1) (since we exclude the possibility of self loops).\\
 
-\noindent for a random vertex v in V: \\
-$\tab$if \textit{v} has no outgoing edges:\\
-$\tab$$\tab$ delete \textit{v}\\
-$\tab$$\tab$ quit\\
-$\tab$if \textit{v} has no incoming edges:\\
-$\tab$$\tab$ delete \textit{v}\\
-$\tab$$\tab$ quit\\
-$\tab$for all edges pred(v)->v->succ(v) \\
-$\tab$$\tab$if succ(v) in adj(pred(v)):\\
-$\tab$$\tab$$\tab$old.weight = weight pred(v)->succ(v) \\
-$\tab$$\tab$if old.weight == null:\\
-$\tab$$\tab$$\tab$insert new edge pred(v) -> succ(v)\\
-$\tab$$\tab$if old.weight != Null AND weight(pred(v)->v->succ(v)) < old.weight: \\
-$\tab$$\tab$$\tab$change weight pred(v)->succ(v) to equal weight(pred(v)->v->succ(v))\\
-$\tab$delete \textit{v}
 \section*{Problem 1 - b}
+Now suppose we have already computed all shortest-path distances in G'. Describe an algorithm to compute the shortest-path distances from $v$ to every other vertex, and from every other vertex to $v$, in the original graph G, in O($V^2$) time. \\
+
+We break this problem into two parts. First, we will calculate the shortest path from $v$ to all $u$s in V'. Then, we will compute the shortest path from all $u$s in V' to $v$. \\
+
+To compute the shortest path from $v$ to all $u$s in V', we first observe that the shortest path between any $u_i \rightarrow u_j$ hasn't changed, and \emph{will not change} with the addition of $v$ back into the graph. \\
+
+
+Now, for each outgoing edge $e = (v, u_i)$:\\
+	$\tab$$\tab$$\tab$
+	First, initialize $dist(v \rightarrow u_i) \leftarrow \infty$ \\
+	$\tab$$\tab$$\tab$
+	For each vertex $u_j \in{V'} \textbackslash u_i$ \\
+		$\tab$ $\tab$$\tab$$\tab$$\tab$
+		Check the shortest path length $p = dist(u_i \rightarrow u_j)$. If $p + w(e) <  dist(v \rightarrow u_j)$ then $dist(v \rightarrow u_j) \leftarrow p + w(e)$
+
+Secondly, for each vertex $u_i \in{V'}$ \\
+	$\tab$$\tab$$\tab$
+	First, initialize $dist(u_i \rightarrow v) \leftarrow \infty$ \\
+	$\tab$$\tab$$\tab$
+	For each incoming edge $e = (u_j, v)$ \\
+		$\tab$$\tab$$\tab$$\tab$$\tab$
+		Check the shortest path $p = dist(u_i \rightarrow u_j)$. If $p + w(e) < dist(u_i \rightarrow v)$ then $dist(u_i \rightarrow v) \leftarrow p + w(e)$.\\
+
+This runs in O($V^2$) time, since the first step checks each outgoing edge (of which there may be up to V), and for each of these edges checks the distance between a node and every other node, which of course is V calculations. Hence, $V^2$. The second portion is $V^2$ for very similar reasons - we check each incoming edge and for each node we check the distance between that node and each other node.
+	
 
 \section*{Problem 1 - c}
 
-To calculate all pairs' shortest paths from the above two algorithms, only simple modifications are required. For each v in V, run the algorithm in problem 1a, replacing "a random vertex \textit{v}" with "\textit{v}". After deleting a vertex \textit{v}, record it in an array. This step runs in O($V^3$) time since it runs an  O($V^2$) algorithm for each vertex. \\
+To calculate all pairs' shortest paths from the above two algorithms, only simple modifications are required. \\
 
-Then, we have a list of vertices in the order we've deleted them. In LIFO order, perform algorithm b on each vertex replaced. at each step, algorithm 1b calculates the shortest path between the new vertex inserted and all existing vertices. This step runs in O($V^3$) time, since it runs an  O($V^2$) algorithm for each vertex. \\
 
-Thus, the run-time for the total algorithm is  O($2V^3$), which simplifies to O($V^3$) \\
+Here we define a recursive version of our algorithm (\emph{easily} adaptable to be iterative).
+A(V) represents running part a on the set of vertices V, and B(V, v) represents adding vertex v back into the set V:\\
+
+Recursive:\\
+$\tab$$\tab$$\tab$C(V) => \\
+$\tab$$\tab$$\tab$$\tab$$\tab$$\tab$$\tab$A(V, v) (choose any vertex from V to use as v) \\
+$\tab$$\tab$$\tab$$\tab$$\tab$$\tab$$\tab$C(V$\textbackslash$v) \\
+$\tab$$\tab$$\tab$$\tab$$\tab$$\tab$$\tab$B(V, v) \\
+
+
+The run time of C(V) is O($V^3$) since A runs in O($V^2$) and B also runs in O($V^2$), and C(V) runs both A and B V times. So, $V^3$.
+
 \end{document}
