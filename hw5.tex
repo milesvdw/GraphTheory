@@ -17,24 +17,23 @@
 	
 \section*{Problem 1 - a}
 Suppose $\exists$ a maximal matching \textit{M} and a maximum matching \textit{M*} in \textit{G=(V,E)}.
-$\rightarrow$ For each matched vertex in \textit{M}, there must be at least two matched vertices in \textit{M*}\\
-AND\\
-$\rightarrow$ There must be at least one matched vertex in \textit{M} for which $\exists$ 4 matched vertices in \textit{M*} \\
-Contradiction: Take these four vertices \textit{$v_1$,$v_2$,$v_3$,$v_4$} and at least 2 edges \textit{$e_1$} and \textit{$e_2$} which must connect either \textit{$v_1$ $\rightarrow$ $v_2$} and\\ \textit{$v_3$ $\rightarrow$ $v_4$} or \textit{$v_1$ $\rightarrow$ $v_3$} and \textit{$v_2$ $\rightarrow$ $v_4$} in \textit{M*}. In \textit{M}, only one of these 4 vertices is matched (thus using a third edge by necessity), leaving one of \textit{$e_1$} or \textit{$e_2$} as a free edge (with neither of its vertices included in the M matching).\\
+This implies that for each matched vertex in \textit{M}, there must be at least two matched vertices in \textit{M*}, and that there must be at least one matched vertex in \textit{M} for which $\exists$ 4 matched vertices (4 because only an even number of matched vertices may exist)in \textit{M*} \\
 
-$\therefore$, |\textit{M}| cannot be less than $\frac{1}{2}$ |\textit{M*}|. Thus, |\textit{M}| $\geq$ $\frac{1}{2}$ |\textit{M*}|.\\
+This results in a contradiction: Take these four vertices \textit{$v_1$,$v_2$,$v_3$,$v_4$} and at least 2 edges \textit{$e_1$} and \textit{$e_2$} which must connect either \textit{$v_1$ $\rightarrow$ $v_2$} and\\ \textit{$v_3$ $\rightarrow$ $v_4$} or \textit{$v_1$ $\rightarrow$ $v_3$} and \textit{$v_2$ $\rightarrow$ $v_4$} in \textit{M*}. In \textit{M}, only one of these 4 vertices is matched (thus using a third edge by necessity), leaving one of \textit{$e_1$} or \textit{$e_2$} as a free edge (with neither of its vertices included in the M matching).\\
+
+$\therefore$ |\textit{M}| cannot be less than $\frac{1}{2}$ |\textit{M*}|. Thus, |\textit{M}| $\geq$ $\frac{1}{2}$ |\textit{M*}|.\\
 \\
-Then, to computed a maximal matching, simply iterate over all edges in \textit{G}, and match each free edge found, giving us a running time of \textit{O(E)}.\\
+Then, to compute a maximal matching, simply iterate over all edges in \textit{G} and match each free edge found. This yields a running time of \textit{O(E)}.\\
 Pseudocode:\\
 $\tab$for each edge e = (u,v) in E:\\
 $\tab$ $\tab$ if u and v are free, mark u and v, using e.
 
 \section*{Problem 2}
-If a graph is bipartitce, then every path is an alternating path between odd and even vertices, and no vertex can be both even and odd (by definition). \\
+If a graph is bipartite, then every path is an alternating path between odd and even vertices, and no vertex can be both even and odd (by definition). \\
 Assume $\exists$ some odd cycle \textit{$v_1$ $\rightarrow$ $v_2$ ...$v_n$} where \textit{n} is odd. Then, assign \textit{$v_1$} to be odd and walk the cycle. \textit{$v_2$} must be even,  \textit{$v_2$} odd, and so forth, with \textit{$v_n$} being odd. then, walk from \textit{$v_n$} to \textit{$v_1$}. This path is not an alternating path since \textit{$v_1$} and \textit{$v_n$} are both odd. \\
-$\therefore$, if \textit{G} is bipartite, there can be no odd cycle.\\
+$\therefore$ if \textit{G} is bipartite, there can be no odd cycle.\\
 Now, any path that is not a cycle can be an alternating path. An even cycle can be drawn as an alternating path with \textit{$v_1$} as odd, \textit{$v_2$} even ... \textit{$v_n$} even since \textit{n} is even (even cycle). Therefore, \textit{$v_1$ $\rightarrow$ $v_n$ $\rightarrow$ $v_1$} is an alternating path. so, if a graph is made up of only non-cyclical paths and/or even cycles then it is a bipartite graph. \\
-$\therefore$, if \textit{G} has no odd cycles, it is bipartite\\
+$\therefore$ if \textit{G} has no odd cycles, it is bipartite\\
 \\
-\textit{G} has no cycles $\Leftrightarrow$ \textit{G} is bipartite.
+We may conclude: \textit{G} has no cycles $\Leftrightarrow$ \textit{G} is bipartite.
 \end{document}
